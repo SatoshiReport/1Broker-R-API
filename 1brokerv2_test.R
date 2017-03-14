@@ -80,6 +80,11 @@ cat("two_factor_authentication: ", two_factor_authentication, "\n")
 cat("\n")
 
 
+list[cpu_time_left] <- user_quota_status()
+cat("cpu_time_left: ", cpu_time_left, "\n")
+cat("\n")
+
+
 list[transaction_log] <- user_transaction_log(limit = 1)
 
 if (length(transaction_log) >= 1) {
@@ -324,8 +329,8 @@ cat("\n")
 
 list[bars] <- market_bars(symbol = "EURUSD")
 
-if (length(history) >= 1) {
-    for (i in 1: length(history)) {
+if (length(bars) >= 1) {
+    for (i in 1: length(bars)) {
         cat("market_bars[", i, "], date: ", bars[i][[1]]$date, "\n")
         cat("market_bars[", i, "], open: ", bars[i][[1]]$o, "\n")
         cat("market_bars[", i, "], high: ", bars[i][[1]]$h, "\n")
