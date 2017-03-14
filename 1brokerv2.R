@@ -138,6 +138,30 @@ user_transaction_log <- function(offset = 0, limit = 20, date_start = "1970-01-0
 }
 
 
+user_quota_status <- function() {
+  result <- NULL
+  while(is.null(result)) {
+    tryCatch({
+      data <- content(GET("https://1broker.com/api/v2/user/quota_status.php", query = list(token=token)), as = "parsed")
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("User Quota Status: Error: ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  if (data$error) {stop("User Quota Status: Error: ", data$error_message, "\n")}
+  if (data$warning) {warning("User Quota Status: Warning: ", data$warning_message, "\n")}
+  
+  return_vector <- list(as.numeric(data$response$cpu_time_left))
+  
+  return(return_vector)
+  
+}
+
+
 order_create <- function(symbol, margin, direction, leverage = 1, order_type = "market", order_type_parameter, stop_loss, take_profit, shared = "false") {
     tryCatch({order_type_parameter}, error = function(e) {order_type_parameter <<- FALSE})
     tryCatch({stop_loss}, error = function(e) {stop_loss <<- FALSE})
@@ -458,11 +482,11 @@ market_quotes <- function(symbols="BTCUSD") {
 }
 
 
-market_bars <- function(symbol, resolution = 86400, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")) {
+market_bars <- function(symbol, resolution = 86400, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"), limit=NULL ) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
-            data <- content(GET("https://1broker.com/api/v2/market/bars.php", query = list(token=token, symbol=symbol, resolution=resolution, date_start=date_start, date_end = date_end)), as = "parsed")
+            data <- content(GET("https://1broker.com/api/v2/market/bars.php", query = list(token=token, symbol=symbol, resolution=resolution, date_start=date_start, date_end = date_end, limit=limit)), as = "parsed")
             result <- TRUE
         },
         error = function(e) {
