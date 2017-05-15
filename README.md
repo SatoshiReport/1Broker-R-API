@@ -1,5 +1,5 @@
 # 1Broker R API
-R API for 1Broker (version 2 of their API)
+R API for 1Broker (version 2.1 of their API)
 
 1Broker provides Forex and CFD trading with bitcoin.  They can be accessed here:
 https://1broker.com/?r=3981
