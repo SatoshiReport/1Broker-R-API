@@ -380,6 +380,45 @@ position_close_cancel <- function(position_id) {
 }
 
 
+position_shared_get <- function(position_id) {
+  result <- NULL
+  while( is.null(result) ) {
+    tryCatch({  
+      data <- content(GET("https://1broker.com/api/v2/position/shared/get.php", query = list(token=token, position_id=position_id)), as = "parsed")
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("Position Shared Get: Error: ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  if (data$error) {stop("Position Shared Get: Error: ", data$error_message, "\n")}
+  if (data$warning) {warning("Position Shared Get: Warning: ", data$warning_message, "\n")}
+  
+  return_vector <- list(data$response$symbol,
+                        data$response$direction,
+                        as.numeric(data$response$position_id),
+                        data$response$username,
+                        data$response$profile_image_url,
+                        as.numeric(data$response$user_id),
+                        as.numeric(data$response$leverage),
+                        data$response$date_created,
+                        as.numeric(data$response$entry_price),
+                        data$response$is_open,
+                        data$response$date_closed,
+                        as.numeric(data$response$exit_price),
+                        as.numeric(data$response$profit_loss_percent),
+                        as.numeric(data$response$stop_loss),
+                        as.numeric(data$response$take_profit),
+                        data$response$trailing_stop_loss,
+                        data$response$comments)
+  return(return_vector)
+  
+}
+  
+
 market_categories <- function() {
     result <- NULL
     while( is.null(result) ) {
@@ -453,9 +492,14 @@ market_details <- function(symbol="BTCUSD") {
                           as.numeric(data$response$maximum_amount),
                           as.numeric(data$response$overnight_charge_long_percent),
                           as.numeric(data$response$overnight_charge_short_percent),
-                          as.numeric(data$response$decimals))
+                          as.numeric(data$response$decimals),
+                          data$response$market_hours$timezone,
+                          data$response$market_hours$open,
+                          data$response$market_hours$close,
+                          data$response$market_hours$daily_break_start,
+                          data$response$market_hours$daily_break_stop)
     return(return_vector)
-
+    
 }
 
 
@@ -523,6 +567,82 @@ get_all_quotes <- function() {
             }
         }
     }
+}
+
+
+social_profile_statistics <- function(user_id=1) {
+  result <- NULL
+  while( is.null(result) ) {
+    tryCatch({  
+      data <- content(GET("https://1broker.com/api/v2/social/profile_statistics.php", query = list(token=token, user_id=user_id)), as = "parsed")
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("Social Profile Statistics: Error: ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  if (data$error) {stop("Social Profile Statistics: Error: ", data$error_message, "\n")}
+  if (data$warning) {warning("Social Profile Statistics: Warning: ", data$warning_message, "\n")}
+  
+  return_vector <- list(data$response$user_id,
+                        data$response$username,
+                        data$response$profile_image_url,
+                        data$response$date_created,
+                        data$response$profile_about_me_html,
+                        data$response$profile_about_me_raw,
+                        data$response$own_profile_hidden,
+                        as.numeric(data$response$risk_score),
+                        as.numeric(data$response$maximum_profit_this_month),
+                        as.numeric(data$response$maximum_loss_this_month),
+                        as.numeric(data$response$copy_trade_reward_total),
+                        as.numeric(data$response$copier_count),
+                        as.numeric(data$response$copy_margin_per_trade),
+                        data$response$performance,
+                        data$response$copier_count_history,
+                        data$response$date_cached,
+                        as.numeric(data$response$average_holding_time_seconds),
+                        as.numeric(data$response$trades_last_7_days),
+                        as.numeric(data$response$trades_last_12_months),
+                        data$response$market_category_share)
+  return(return_vector)
+  
+}
+
+
+social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
+  result <- NULL
+  while( is.null(result) ) {
+    tryCatch({  
+      data <- content(GET("https://1broker.com/api/v2/social/profile_trades.php", query = list(token=token, user_id=user_id, offset = offset, limit = limit)), as = "parsed")
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("Social Profile Trades: Error: ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  if (data$error) {stop("Social Profile Trades: Error: ", data$error_message, "\n")}
+  if (data$warning) {warning("Social Profile Trades: Warning: ", data$warning_message, "\n")}
+  
+  return_vector <- list(as.numeric(data$response$user_id),
+                        data$response$username,
+                        data$response$profile_image_url,
+                        data$response$date_created,
+                        data$response$profile_about_me_html,
+                        data$response$profile_about_me_raw,
+                        data$response$own_profile_hidden,
+                        as.numeric(data$response$risk_score),
+                        as.numeric(data$response$maximum_profit_this_month),
+                        as.numeric(data$response$maximum_loss_this_month),
+                        data$response$trading_ideas_open,
+                        data$response$trading_ideas_closed)
+  return(return_vector)
+  
 }
 
 
