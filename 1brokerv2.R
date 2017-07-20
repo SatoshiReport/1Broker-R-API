@@ -18,12 +18,12 @@ order_open <- function() {
             data <- content(GET("https://1broker.com/api/v2/order/open.php", query = list(token=token)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Order Opem: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Order Open: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -48,12 +48,12 @@ user_details <- function() {
             data <- content(GET("https://1broker.com/api/v2/user/details.php", query = list(token=token)), as = "parsed")
             if (data$error) {
               message_out <- paste0("User Details: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("User Details: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -83,12 +83,12 @@ user_overview <- function() {
             data <- content(GET("https://1broker.com/api/v2/user/overview.php", query = list(token=token)), as = "parsed")
             if (data$error) {
               message_out <- paste0("User Overview: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("User Overview: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -122,12 +122,12 @@ user_bitcoin_deposit_address <- function() {
             data <- content(GET("https://1broker.com/api/v2/user/bitcoin_deposit_address.php", query = list(token=token)), as = "parsed")
             if (data$error) {
               message_out <- paste0("User Bitcoin Deposit Address: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("User Bitcoin Deposit Address: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -153,12 +153,12 @@ user_transaction_log <- function(offset = 0, limit = 20, date_start = "1970-01-0
             data <- content(GET("https://1broker.com/api/v2/user/transaction_log.php", query = list(token=token, offset=offset, limit=limit, date_start=date_start, date_end = date_end)), as = "parsed")
             if (data$error) {
               message_out <- paste0("User Transaction Log: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("User Transaction Log: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -183,12 +183,12 @@ user_quota_status <- function() {
       data <- content(GET("https://1broker.com/api/v2/user/quota_status.php", query = list(token=token)), as = "parsed")
       if (data$error) {
         message_out <- paste0("User Quota Status: Error: ", data$error_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
         message_out <- paste0("User Quota Status: Warning: ", data$warning_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
@@ -242,12 +242,12 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
           
             if (data$error) {
               message_out <- paste0("Order Create: Error: ", data$error_message, "\n")
-              if (exists('bot')) { bot$sendMessage(message_out) } else {cat("HELLO\n")}
+              if (exists('bot')) { bot$sendMessage(message_out) } 
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Order Create: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -285,12 +285,12 @@ order_cancel <- function(order_id) {
             data <- content(GET("https://1broker.com/api/v2/order/cancel.php", query = list(token=token, order_id=order_id)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Order Cancel: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Order Cancel: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -314,12 +314,12 @@ position_open <- function() {
             data <- content(GET("https://1broker.com/api/v2/position/open.php", query = list(token=token)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Position Open: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Position Open: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -345,12 +345,12 @@ position_history <- function(offset = 0, limit = 20, date_start = "1970-01-01T12
             data <- content(GET("https://1broker.com/api/v2/position/history.php", query = list(token=token, offset=offset, limit=limit, date_start=date_start, date_end = date_end)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Position History: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Position History: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -404,12 +404,12 @@ position_edit <- function(position_id, stop_loss, take_profit, trailing_stop_los
           
           if (data$error) {
             message_out <- paste0("Position Edit: Error: ", data$error_message, "\n")
-            if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+            if (exists('bot')) { bot$sendMessage(message_out) }
             cat(message_out)
           }
           if (data$warning) {
             message_out <- paste0("Position Edit: Warning: ", data$warning_message, "\n")
-            if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+            if (exists('bot')) { bot$sendMessage(message_out) }
             cat(message_out)
           }
           result <- TRUE
@@ -440,12 +440,12 @@ position_close <- function(position_id) {
             print(data)
             if (data$error) {
               message_out <- paste0("Position Close: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Position Close: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -469,12 +469,12 @@ position_close_cancel <- function(position_id) {
             data <- content(GET("https://1broker.com/api/v2/position/close_cancel.php", query = list(token=token, position_id=position_id)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Position Close Cancel: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Position Close Cancel: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -498,12 +498,12 @@ position_shared_get <- function(position_id) {
       data <- content(GET("https://1broker.com/api/v2/position/shared/get.php", query = list(token=token, position_id=position_id)), as = "parsed")
       if (data$error) {
         message_out <- paste0("Position Shared Get: Error: ", data$error_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
         message_out <- paste0("Position Shared Get: Warning: ", data$warning_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
@@ -544,12 +544,12 @@ market_categories <- function() {
             data <- content(GET("https://1broker.com/api/v2/market/categories.php", query = list(token=token)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Market Categories: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Market Categories: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -573,12 +573,12 @@ market_list <- function(category = "Index") {
             data <- content(GET("https://1broker.com/api/v2/market/list.php", query = list(token=token, category=category)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Market List: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Market List: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -603,12 +603,12 @@ market_details <- function(symbol="BTCUSD") {
             data <- content(GET("https://1broker.com/api/v2/market/details.php", query = list(token=token, symbol=symbol)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Market Details: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Market Details: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -647,12 +647,12 @@ market_quotes <- function(symbols="BTCUSD") {
             data <- content(GET("https://1broker.com/api/v2/market/quotes.php", query = list(token=token, symbols=symbols)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Market Quotes: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Market Quotes: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -677,12 +677,12 @@ market_bars <- function(symbol, resolution = 86400, date_start = "1970-01-01T12:
             data <- content(GET("https://1broker.com/api/v2/market/bars.php", query = list(token=token, symbol=symbol, resolution=resolution, date_start=date_start, date_end = date_end, limit=limit)), as = "parsed")
             if (data$error) {
               message_out <- paste0("Market Bars: Error: ", data$error_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
               message_out <- paste0("Market Bars: Warning: ", data$warning_message, "\n")
-              if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+              if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
@@ -728,12 +728,12 @@ social_profile_statistics <- function(user_id=1) {
       data <- content(GET("https://1broker.com/api/v2/social/profile_statistics.php", query = list(token=token, user_id=user_id)), as = "parsed")
       if (data$error) {
         message_out <- paste0("Social Profile Statistics: Error: ", data$error_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
         message_out <- paste0("Social Profile Statistics: Warning: ", data$warning_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
@@ -777,12 +777,12 @@ social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
       data <- content(GET("https://1broker.com/api/v2/social/profile_trades.php", query = list(token=token, user_id=user_id, offset = offset, limit = limit)), as = "parsed")
       if (data$error) {
         message_out <- paste0("Social Profile Trades: Error: ", data$error_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
         message_out <- paste0("Social Profile Trades: Warning: ", data$warning_message, "\n")
-        if (length(find('bot')) != 0) { bot$sendMessage(message_out) }
+        if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
