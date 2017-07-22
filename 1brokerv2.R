@@ -35,7 +35,9 @@ order_open <- function() {
         })
     }
     
-    return_vector <- list(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
     
 }
@@ -69,7 +71,9 @@ user_details <- function() {
                           data$response$email,
                           as.numeric(data$response$balance),
                           as.numeric(data$response$deposit_unconfirmed),
-                          data$response$date_created)
+                          data$response$date_created,
+                          data$error_message,
+                          data$warning_message)
     
     return(return_vector)
     
@@ -109,7 +113,9 @@ user_overview <- function() {
                           as.numeric(data$response$positions_worth),
                           as.numeric(data$response$net_worth),
                           data$response$orders_open,
-                          data$response$positions_open)
+                          data$response$positions_open,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -140,7 +146,9 @@ user_bitcoin_deposit_address <- function() {
     }
 
     return_vector <- list(data$response$bitcoin_deposit_address,
-                          data$response$two_factor_authentication)
+                          data$response$two_factor_authentication,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -170,7 +178,9 @@ user_transaction_log <- function(offset = 0, limit = 20, date_start = "1970-01-0
         })
     }
 
-    return_vector <- list(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -200,7 +210,9 @@ user_quota_status <- function() {
     })
   }
   
-  return_vector <- list(as.numeric(data$response$cpu_time_left))
+  return_vector <- list(as.numeric(data$response$cpu_time_left),
+                        data$error_message,
+                        data$warning_message)
   
   return(return_vector)
   
@@ -271,7 +283,9 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
                           as.numeric(data$response$take_profit),
                           data$response$shared,
                           data$response$copy_of,
-                          data$response$date_created
+                          data$response$date_created,
+                          data$error_message,
+                          data$warning_message
                           )
     return(return_vector)
 
@@ -332,7 +346,9 @@ position_open <- function() {
     }
 
 
-    return_vector <- list(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -362,7 +378,9 @@ position_history <- function(offset = 0, limit = 20, date_start = "1970-01-01T12
         })
     }
 
-    return_vector <- list(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -424,7 +442,9 @@ position_edit <- function(position_id, stop_loss, take_profit, trailing_stop_los
     return_vector <- list(data$response$position_id,
                           as.numeric(data$response$stop_loss),
                           as.numeric(data$response$take_profit),
-                          data$response$trailing_stop_loss
+                          data$response$trailing_stop_loss,
+                          data$error_message,
+                          data$warning_message
                           )
     return(return_vector)
 
@@ -531,7 +551,9 @@ position_shared_get <- function(position_id) {
                         as.numeric(data$response$stop_loss),
                         as.numeric(data$response$take_profit),
                         data$response$trailing_stop_loss,
-                        data$response$comments)
+                        data$response$comments,
+                        data$error_message,
+                        data$warning_message)
   return(return_vector)
   
 }
@@ -561,7 +583,11 @@ market_categories <- function() {
         })
     }
 
-    return(data$response)
+    #return(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
+    return(return_vector)
 
 }
 
@@ -590,7 +616,9 @@ market_list <- function(category = "Index") {
         })
     }
 
-    return_vector <- list(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -634,7 +662,9 @@ market_details <- function(symbol="BTCUSD") {
                           data$response$market_hours$open,
                           data$response$market_hours$close,
                           data$response$market_hours$daily_break_start,
-                          data$response$market_hours$daily_break_stop)
+                          data$response$market_hours$daily_break_stop,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
     
 }
@@ -664,7 +694,9 @@ market_quotes <- function(symbols="BTCUSD") {
         })
     }
     
-    return_vector <- list(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -694,7 +726,9 @@ market_bars <- function(symbol, resolution = 86400, date_start = "1970-01-01T12:
         })
     }
 
-    return_vector <- list(data$response)
+    return_vector <- list(data$response,
+                          data$error_message,
+                          data$warning_message)
     return(return_vector)
 
 }
@@ -764,7 +798,9 @@ social_profile_statistics <- function(user_id=1) {
                         as.numeric(data$response$average_holding_time_seconds),
                         as.numeric(data$response$trades_last_7_days),
                         as.numeric(data$response$trades_last_12_months),
-                        data$response$market_category_share)
+                        data$response$market_category_share,
+                        data$error_message,
+                        data$warning_message)
   return(return_vector)
   
 }
@@ -788,7 +824,7 @@ social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
       result <- TRUE
     },
     error = function(e) {
-      cat("Social Profile Trades: Error: ", as.character(e), "\n")
+      cat("Social Profile Trades: Error(2): ", as.character(e), "\n")
       Sys.sleep(60)
       result <- NULL
     })
@@ -805,7 +841,9 @@ social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
                         as.numeric(data$response$maximum_profit_this_month),
                         as.numeric(data$response$maximum_loss_this_month),
                         data$response$trading_ideas_open,
-                        data$response$trading_ideas_closed)
+                        data$response$trading_ideas_closed,
+                        data$error_message,
+                        data$warning_message)
   return(return_vector)
   
 }
