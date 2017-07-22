@@ -58,7 +58,7 @@ cat("market_category_share: FOREX: ", market_category_share$FOREX, "\n")
 cat("\n")
 
 
-list[user_id, username, profile_image_url, date_created, profile_about_me_html, profile_about_me_raw, own_profile_hidden,
+list[user_id, username, profile_image_url, date_created, profile_about_me_html, profile_about_me_raw, own_profile_hidden, risk_score,
      maximum_profit_this_month, maximum_loss_this_month, trading_ideas_open, trading_ideas_closed] <- social_profile_trades(user_id=3981)
 
 cat("user_id: ", user_id, "\n")
@@ -68,6 +68,7 @@ cat("date_created: ", date_created, "\n")
 cat("profile_about_me_html: ", profile_about_me_html, "\n")
 cat("profile_about_me_raw: ", profile_about_me_raw, "\n")
 cat("own_profile_hidden: ", own_profile_hidden, "\n")
+cat("risk_score: ",  risk_score, "\n")
 cat("maximum_profit_this_month: ", maximum_profit_this_month, "\n")
 cat("maximum_loss_this_month: ", maximum_loss_this_month, "\n")
 if (trading_ideas_open >= 1) {
