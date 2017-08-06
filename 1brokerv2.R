@@ -17,7 +17,7 @@ order_open <- function() {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/order/open.php", query = list(token=token)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Order Opem: Error: ", data$error_message, "\n")
+              message_out <- paste0("Order Open: Error: ", data$error_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
@@ -253,12 +253,12 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
             }
           
             if (data$error) {
-              message_out <- paste0("Order Create: Error: ", data$error_message, "\n")
+              message_out <- paste0("Order Create: Error: ", symbol, ": ", data$error_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) } 
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Order Create: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Order Create: Warning: ", symbol, ": ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
@@ -266,7 +266,7 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
             cat("Order", data$response$order_id, "created\n")
         },
         error = function(e) {
-            cat("Order Create: Error: ", as.character(e), "\n")
+            cat("Order Create: Error: ", symbol, ": ", as.character(e), "\n")
             Sys.sleep(60)
             result <- NULL
         })
@@ -848,4 +848,132 @@ social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
   
 }
 
+
+social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
+  result <- NULL
+  while( is.null(result) ) {
+    tryCatch({  
+      data <- content(GET("https://1broker.com/api/v2/social/profile_trades.php", query = list(token=token, user_id=user_id, offset = offset, limit = limit)), as = "parsed")
+      if (data$error) {
+        message_out <- paste0("Social Profile Trades: Error: ", data$error_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      if (data$warning) {
+        message_out <- paste0("Social Profile Trades: Warning: ", data$warning_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("Social Profile Trades: Error(2): ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  return_vector <- list(as.numeric(data$response$user_id),
+                        data$response$username,
+                        data$response$profile_image_url,
+                        data$response$date_created,
+                        data$response$profile_about_me_html,
+                        data$response$profile_about_me_raw,
+                        data$response$own_profile_hidden,
+                        as.numeric(data$response$risk_score),
+                        as.numeric(data$response$maximum_profit_this_month),
+                        as.numeric(data$response$maximum_loss_this_month),
+                        data$response$trading_ideas_open,
+                        data$response$trading_ideas_closed,
+                        data$error_message,
+                        data$warning_message)
+  return(return_vector)
+  
+}
+
+
+copy_trader_create <- function(user_id=3981, margin_per_trade = 0.25, limit_trades_daily = 20) {
+  result <- NULL
+  while( is.null(result) ) {
+    tryCatch({  
+      data <- content(GET("https://1broker.com/api/v2/copy_trader/create.php", query = list(token=token, user_id=user_id, margin_per_trade = margin_per_trade, limit_trades_daily = limit_trades_daily)), as = "parsed")
+      if (data$error) {
+        message_out <- paste0("Copy Trader Create: Error: ", data$error_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      if (data$warning) {
+        message_out <- paste0("Copy Trader Create: Warning: ", data$warning_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("Copy Trader Create: Error(2): ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  return(TRUE)
+  
+}
+
+
+copy_trader_edit <- function(user_id=3981, margin_per_trade = 0.25, limit_trades_daily = 20) {
+  result <- NULL
+  while( is.null(result) ) {
+    tryCatch({  
+      data <- content(GET("https://1broker.com/api/v2/copy_trader/edit.php", query = list(token=token, user_id=user_id, margin_per_trade = margin_per_trade, limit_trades_daily = limit_trades_daily)), as = "parsed")
+      if (data$error) {
+        message_out <- paste0("Copy Trader Edit: Error: ", data$error_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      if (data$warning) {
+        message_out <- paste0("Copy Trader Edit: Warning: ", data$warning_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("Copy Trader Edit: Error(2): ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  return(TRUE)
+  
+}
+
+copy_trader_delete <- function(user_id=3981) {
+  result <- NULL
+  while( is.null(result) ) {
+    tryCatch({  
+      data <- content(GET("https://1broker.com/api/v2/copy_trader/delete.php", query = list(token=token, user_id=user_id)), as = "parsed")
+      if (data$error) {
+        message_out <- paste0("Copy Trader Delete: Error: ", data$error_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      if (data$warning) {
+        message_out <- paste0("Copy Trader Delete: Warning: ", data$warning_message, "\n")
+        if (exists('bot')) { bot$sendMessage(message_out) }
+        cat(message_out)
+      }
+      result <- TRUE
+    },
+    error = function(e) {
+      cat("Copy Trader Delete: Error(2): ", as.character(e), "\n")
+      Sys.sleep(60)
+      result <- NULL
+    })
+  }
+  
+  return(TRUE)
+  
+}
 
