@@ -1,4 +1,4 @@
-source("1brokerv2.R")
+source("~/r/1brokerv2.R")
 
 token <- 'xxxxxx'
 
@@ -12,10 +12,37 @@ if (result) {
 cat("\n")
 
 
+result <- copy_trader_create(user_id=3981)
+if (result) {
+  cat("Copy Trader Create has been submitted\n")
+} else {
+  cat("Copy Trader Create has NOT been submitted\n")
+}
+cat("\n")
+
+
+result <- copy_trader_edit(user_id=3981, margin_per_trade = 0.50, limit_trades_daily = 30)
+if (result) {
+  cat("Copy Trader Edit has been submitted\n")
+} else {
+  cat("Copy Trader Edit has NOT been submitted\n")
+}
+cat("\n")
+
+
+result <- copy_trader_delete(user_id=3981)
+if (result) {
+  cat("Copy Trader Delete has been submitted\n")
+} else {
+  cat("Copy Trader Delete has NOT been submitted\n")
+}
+cat("\n")
+
+
 list[user_id, username, profile_image_url, date_created, profile_about_me_html, profile_about_me_raw, own_profile_hidden, risk_score, 
      maximum_profit_this_month, maximum_loss_this_month, copy_trade_reward_total, copier_count, copy_margin_per_trade, performance, 
      copier_count_history, date_cached, average_holding_time_seconds, trades_last_7_days, trades_last_12_months, 
-     market_category_share] <- social_profile_statistics(user_id=3981)
+     market_category_share, error_message, warning_message] <- social_profile_statistics(user_id=3981)
 
 cat("user_id: ", user_id, "\n")
 cat("username: ", username, "\n")
@@ -59,7 +86,7 @@ cat("\n")
 
 
 list[user_id, username, profile_image_url, date_created, profile_about_me_html, profile_about_me_raw, own_profile_hidden, risk_score,
-     maximum_profit_this_month, maximum_loss_this_month, trading_ideas_open, trading_ideas_closed] <- social_profile_trades(user_id=3981)
+     maximum_profit_this_month, maximum_loss_this_month, trading_ideas_open, trading_ideas_closed, error_message, warning_message] <- social_profile_trades(user_id=3981)
 
 cat("user_id: ", user_id, "\n")
 cat("username: ", username, "\n")
@@ -71,8 +98,8 @@ cat("own_profile_hidden: ", own_profile_hidden, "\n")
 cat("risk_score: ",  risk_score, "\n")
 cat("maximum_profit_this_month: ", maximum_profit_this_month, "\n")
 cat("maximum_loss_this_month: ", maximum_loss_this_month, "\n")
-if (trading_ideas_open >= 1) {
-  for (i in 1: length(trading_ideas_open)) {
+if (length(trading_ideas_open) >= 1) {
+  for (i in 1:length(trading_ideas_open)) {
     cat("trading_ideas_open[", i, "], position_id: ", trading_ideas_open[i][[1]]$position_id, "\n")
     cat("trading_ideas_open[", i, "], symbol: ", trading_ideas_open[i][[1]]$symbol, "\n")
     cat("trading_ideas_open[", i, "], leverage: ", trading_ideas_open[i][[1]]$leverage, "\n")
@@ -105,7 +132,7 @@ cat("\n")
 
 
 list[symbol, direction, position_id, username, profile_image_url, user_id, leverage, date_created, entry_price, is_open, 
-     date_closed, exit_price, profit_loss_percent, stop_loss, take_profit, trailing_stop_loss, comments] <- position_shared_get(position_id=1212723)
+     date_closed, exit_price, profit_loss_percent, stop_loss, take_profit, trailing_stop_loss, comments, error_message, warning_message] <- position_shared_get(position_id=1212723)
 
 cat("symbol: ", symbol, "\n")
 cat("direction: ", direction, "\n")
@@ -140,7 +167,7 @@ if (length(comments) >= 1) {
 cat("\n")
 
 
-list[username, email, balance, deposit_unconfirmed, date_created] <- user_details()
+list[username, email, balance, deposit_unconfirmed, date_created, error_message, warning_message] <- user_details()
 cat("username: ", username, "\n")
 cat("email: ", email, "\n")
 cat("balance: ", balance, "\n")
@@ -149,7 +176,8 @@ cat("date_created: ", date_created, "\n")
 cat("\n")
 
 
-list[username, email, balance, deposit_unconfirmed, date_created, orders_worth, positions_worth, net_worth, orders_open, positions_open] <- user_overview()
+list[username, email, balance, deposit_unconfirmed, date_created, orders_worth, positions_worth, 
+     net_worth, orders_open, positions_open, error_message, warning_message] <- user_overview()
 
 cat("username: ", username, "\n")
 cat("email: ", email, "\n")
@@ -203,18 +231,18 @@ if (length(positions_open) >= 1) {
 cat("\n")
 
 
-list[bitcoin_deposit_address, two_factor_authentication] <- user_bitcoin_deposit_address()
+list[bitcoin_deposit_address, two_factor_authentication, error_message, warning_message] <- user_bitcoin_deposit_address()
 cat("bitcoin_deposit_address: ", bitcoin_deposit_address, "\n")
 cat("two_factor_authentication: ", two_factor_authentication, "\n")
 cat("\n")
 
 
-list[cpu_time_left] <- user_quota_status()
+list[cpu_time_left, error_message, warning_message] <- user_quota_status()
 cat("cpu_time_left: ", cpu_time_left, "\n")
 cat("\n")
 
 
-list[transaction_log] <- user_transaction_log(limit = 1)
+list[transaction_log, error_message, warning_message] <- user_transaction_log(limit = 1)
 
 if (length(transaction_log) >= 1) {
     for (i in 1: length(transaction_log)) {
@@ -229,7 +257,8 @@ if (length(transaction_log) >= 1) {
 cat("\n")
 
 
-list[order_id, symbol, margin, leverage, direction, order_type, order_type_parameter, stop_loss, take_profit, shared, copy_of, date_created] <- order_create(symbol = "BTCUSD", margin = 0.01, direction="long")
+list[order_id, symbol, margin, leverage, direction, order_type, order_type_parameter, stop_loss, 
+     take_profit, shared, copy_of, date_created, error_message, warning_message] <- order_create(symbol = "BTCUSD", margin = 0.01, direction="long")
 cat("order_id: ", order_id, "\n")
 cat("symbol: ", symbol, "\n")
 cat("margin: ", margin, "\n")
@@ -245,7 +274,7 @@ cat("date_created: ", date_created, "\n")
 cat("\n")
 
 
-list[open] <- order_open()
+list[open, error_message, warning_message] <- order_open()
 
 if (length(open) >= 1) {
     for (i in 1: length(open)) {
@@ -277,7 +306,7 @@ if (result) {
 cat("\n")
 
 
-list[open] <- position_open()
+list[open, error_message, warning_message] <- position_open()
 
 if (length(open) >= 1) {
   for (i in 1: length(open)) {
@@ -305,7 +334,7 @@ if (length(open) >= 1) {
 cat("\n")
 
 
-list[history] <- position_history(limit = 3)
+list[history, error_message, warning_message] <- position_history(limit = 3)
 
 if (length(history) >= 1) {
     for (i in 1: length(history)) {
@@ -333,10 +362,11 @@ if (length(history) >= 1) {
 cat("\n")
 
 
-list[order_id, symbol, margin, leverage, direction, order_type, order_type_parameter, stop_loss, take_profit, shared, copy_of, date_created] <- order_create(symbol = "BTCUSD", margin = 0.01, direction="long")
+list[order_id, symbol, margin, leverage, direction, order_type, order_type_parameter, stop_loss, 
+     take_profit, shared, copy_of, date_created, error_message, warning_message] <- order_create(symbol = "BTCUSD", margin = 0.01, direction="long")
 result <- NULL
 while( is.null(result) ) {
-    list[open] <- position_open()
+    list[open, error_message, warning_message] <- position_open()
     if (length(open) >= 1) {
         for (i in 1: length(open)) {
             if (open[i][[1]]$symbol == "BTCUSD") {
@@ -353,30 +383,40 @@ while( is.null(result) ) {
 }
 cat("\n")
 
-list[position_id, stop_loss, take_profit] <- position_edit(position_id=position_id)
+list[position_id, stop_loss, take_profit, trailing_stop_loss, error_message, warning_message] <- position_edit(position_id=position_id)
 cat("position_id: ", position_id, "\n")
 cat("stop_loss: ", stop_loss, "\n")
 cat("take_profit: ", take_profit, "\n")
+cat("trailing_stop_loss: ", trailing_stop_loss, "\n")
 cat("\n")
 
-list[position_id, stop_loss, take_profit] <- position_edit(position_id=position_id, take_profit=9000)
+list[position_id, stop_loss, take_profit, trailing_stop_loss, error_message, warning_message] <- position_edit(position_id=position_id, take_profit=9000)
 cat("position_id: ", position_id, "\n")
 cat("stop_loss: ", stop_loss, "\n")
 cat("take_profit: ", take_profit, "\n")
+cat("trailing_stop_loss: ", trailing_stop_loss, "\n")
 cat("\n")
 
-list[position_id, stop_loss, take_profit] <- position_edit(position_id=position_id, stop_loss= 1000)
+list[position_id, stop_loss, take_profit, trailing_stop_loss, error_message, warning_message] <- position_edit(position_id=position_id, stop_loss= 1000)
 cat("position_id: ", position_id, "\n")
 cat("stop_loss: ", stop_loss, "\n")
 cat("take_profit: ", take_profit, "\n")
+cat("trailing_stop_loss: ", trailing_stop_loss, "\n")
 cat("\n")
 
-list[position_id, stop_loss, take_profit] <- position_edit(position_id=position_id, take_profit=9000, stop_loss=1000)
+list[position_id, stop_loss, take_profit, trailing_stop_loss, error_message, warning_message] <- position_edit(position_id=position_id, take_profit=9000, stop_loss=1000)
 cat("position_id: ", position_id, "\n")
 cat("stop_loss: ", stop_loss, "\n")
 cat("take_profit: ", take_profit, "\n")
+cat("trailing_stop_loss: ", trailing_stop_loss, "\n")
 cat("\n")
 
+list[position_id, stop_loss, take_profit, trailing_stop_loss, error_message, warning_message] <- position_edit(position_id=position_id, take_profit=9000, stop_loss=1000, trailing_stop_loss = "true")
+cat("position_id: ", position_id, "\n")
+cat("stop_loss: ", stop_loss, "\n")
+cat("take_profit: ", take_profit, "\n")
+cat("trailing_stop_loss: ", trailing_stop_loss, "\n")
+cat("\n")
 
 result <- position_close(position_id=position_id)
 if (result) {
@@ -404,7 +444,7 @@ cat("\n")
 
 categories <- market_categories()
 for (category in categories) {
-    list[market] <- market_list(category=category)
+    list[market, error_message, warning_message] <- market_list(category=category)
     for (i in 1: length(market)) {
         cat("market_list[", i, "], symbol: ", market[i][[1]]$symbol, "\n")
         cat("market_list[", i, "], name: ", market[i][[1]]$name, "\n")
@@ -416,7 +456,7 @@ cat("\n")
 
 
 list[symbol, name, description, category, type, maximum_leverage, maximum_amount, overnight_charge_long_percent, 
-     overnight_charge_short_percent, decimals, timezone, open, close, daily_break_start, daily_break_stop] <- market_details()
+     overnight_charge_short_percent, decimals, timezone, open, close, daily_break_start, daily_break_stop, error_message, warning_message] <- market_details()
 
 cat("symbol: ", symbol, "\n")
 cat("name: ", name, "\n")
@@ -436,7 +476,7 @@ cat("daily_break_stop: ", daily_break_stop, "\n")
 cat("\n")
 
 
-list[quotes] <- market_quotes(symbols='EURUSD')
+list[quotes, error_message, warning_message] <- market_quotes(symbols='EURUSD')
 for (i in 1: length(quotes)) {
     cat("market_quotes[", i, "], symbol: ", quotes[i][[1]]$symbol, "\n")
     cat("market_quotes[", i, "], bid: ", quotes[i][[1]]$bid, "\n")
@@ -445,7 +485,7 @@ for (i in 1: length(quotes)) {
 }
 cat("\n")
 
-list[quotes] <- market_quotes()
+list[quotes, error_message, warning_message] <- market_quotes()
 for (i in 1: length(quotes)) {
     cat("market_quotes[", i, "], symbol: ", quotes[i][[1]]$symbol, "\n")
     cat("market_quotes[", i, "], bid: ", quotes[i][[1]]$bid, "\n")
@@ -454,7 +494,7 @@ for (i in 1: length(quotes)) {
 }
 cat("\n")
 
-list[quotes] <- market_quotes(symbols='EURUSD,GOLD')
+list[quotes, error_message, warning_message] <- market_quotes(symbols='EURUSD,GOLD')
 for (i in 1: length(quotes)) {
     cat("market_quotes[", i, "], symbol: ", quotes[i][[1]]$symbol, "\n")
     cat("market_quotes[", i, "], bid: ", quotes[i][[1]]$bid, "\n")
@@ -464,7 +504,7 @@ for (i in 1: length(quotes)) {
 cat("\n")
 
 
-list[bars] <- market_bars(symbol = "EURUSD")
+list[bars, error_message, warning_message] <- market_bars(symbol = "EURUSD")
 
 if (length(bars) >= 1) {
     for (i in 1: 10) {
@@ -481,3 +521,6 @@ cat("\n")
 
 
 get_all_quotes()
+
+
+
