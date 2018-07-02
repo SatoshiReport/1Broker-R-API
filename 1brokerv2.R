@@ -212,6 +212,8 @@ user_quota_status <- function() {
   }
   
   return_vector <- list(as.numeric(data$response$cpu_time_left),
+                        as.numeric(data$response$cpu_time_left_percentage), 
+                        as.numeric(data$response$cpu_time_total),
                         data$error_message,
                         data$warning_message)
   
