@@ -190,7 +190,8 @@ user_quota_status <- function() {
   result <- NULL
   while(is.null(result)) {
     tryCatch({
-      data <- content(GET("https://1broker.com/api/v2/user/quota_status.php", query = list(token=token)), as = "parsed")
+      #data <- content(GET("https://1broker.com/api/v2/user/quota_status.php", query = list(token=token)), as = "parsed")
+      data <- content(GET("https://1broker.com/api/v2/quota/status.php"), as = "parsed")
       if (data$error) {
         message_out <- paste0("User Quota Status: Error: ", data$error_message, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
