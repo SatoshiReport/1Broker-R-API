@@ -3,6 +3,7 @@
 
 library(httr)
 source("list.R")
+wait_time <- 60
 
 
 use_token <- function(token) {
@@ -11,58 +12,59 @@ use_token <- function(token) {
 }
 
 
-order_open <- function() {
+order_open <- function(token) {
+  print(GET("https://1broker.com/api/v2/order/open.php", query = list(token=token)))
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/order/open.php", query = list(token=token)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Order Open: Error: ", data$error_message, "\n")
+              message_out <- paste0("Order Open: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Order Open: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Order Open: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Orders Open: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Orders Open: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
     
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
     
 }
 
 
-user_details <- function() {
+user_details <- function(token) {
     result <- NULL
     while(is.null(result)) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/user/details.php", query = list(token=token)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("User Details: Error: ", data$error_message, "\n")
+              message_out <- paste0("User Details: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("User Details: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("User Details: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("User Details: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("User Details: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
@@ -72,7 +74,7 @@ user_details <- function() {
                           as.numeric(data$response$balance),
                           as.numeric(data$response$deposit_unconfirmed),
                           data$response$date_created,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     
     return(return_vector)
@@ -80,26 +82,26 @@ user_details <- function() {
 }
 
 
-user_overview <- function() {
+user_overview <- function(token) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/user/overview.php", query = list(token=token)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("User Overview: Error: ", data$error_message, "\n")
+              message_out <- paste0("User Overview: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("User Overview: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("User Overview: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("User Overview: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("User Overview: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
@@ -114,107 +116,107 @@ user_overview <- function() {
                           as.numeric(data$response$net_worth),
                           data$response$orders_open,
                           data$response$positions_open,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-user_bitcoin_deposit_address <- function() {
+user_bitcoin_deposit_address <- function(token) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/user/bitcoin_deposit_address.php", query = list(token=token)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("User Bitcoin Deposit Address: Error: ", data$error_message, "\n")
+              message_out <- paste0("User Bitcoin Deposit Address: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("User Bitcoin Deposit Address: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("User Bitcoin Deposit Address: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("User Bitcoin Deposit Address: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("User Bitcoin Deposit Address: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
 
     return_vector <- list(data$response$bitcoin_deposit_address,
                           data$response$two_factor_authentication,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-user_transaction_log <- function(offset = 0, limit = 20, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")) {
+user_transaction_log <- function(token, offset = 0, limit = 20, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/user/transaction_log.php", query = list(token=token, offset=offset, limit=limit, date_start=date_start, date_end = date_end)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("User Transaction Log: Error: ", data$error_message, "\n")
+              message_out <- paste0("User Transaction Log: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("User Transaction Log: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("User Transaction Log: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("User Transaction Log: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("User Transaction Log: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
 
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-user_quota_status <- function() {
+user_quota_status <- function(token) {
   result <- NULL
   while(is.null(result)) {
     tryCatch({
-      #data <- content(GET("https://1broker.com/api/v2/user/quota_status.php", query = list(token=token)), as = "parsed")
       data <- content(GET("https://1broker.com/api/v2/quota/status.php"), as = "parsed")
       if (data$error) {
-        message_out <- paste0("User Quota Status: Error: ", data$error_message, "\n")
+        message_out <- paste0("User Quota Status: Remote Error: ", data$error_code, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
-        message_out <- paste0("User Quota Status: Warning: ", data$warning_message, "\n")
+        message_out <- paste0("User Quota Status: Remote Warning: ", data$warning_message, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
-    },
-    error = function(e) {
-      cat("User Quota Status: Error: ", as.character(e), "\n")
-      Sys.sleep(60)
-      result <- NULL
-    })
+   },
+   error = function(e) {
+     cat("User Quota Status: Local Error: ", as.character(e), "\n")
+     cat("User Quota Status: Local Error: Will sleep and try again.\n")
+     Sys.sleep(wait_time)
+     result <- NULL
+   })
   }
   
   return_vector <- list(as.numeric(data$response$cpu_time_left),
                         as.numeric(data$response$cpu_time_left_percentage), 
                         as.numeric(data$response$cpu_time_total),
-                        data$error_message,
+                        data$error_code,
                         data$warning_message)
   
   return(return_vector)
@@ -222,7 +224,7 @@ user_quota_status <- function() {
 }
 
 
-order_create <- function(symbol, margin, direction, leverage = 1, order_type = "market", order_type_parameter, stop_loss, take_profit, shared = "false") {
+order_create <- function(token, symbol, margin, direction, leverage = 1, order_type = "market", order_type_parameter, stop_loss, take_profit, shared = "false") {
     tryCatch({order_type_parameter}, error = function(e) {order_type_parameter <<- FALSE})
     tryCatch({stop_loss}, error = function(e) {stop_loss <<- FALSE})
     tryCatch({take_profit}, error = function(e) {take_profit <<- FALSE})
@@ -256,12 +258,12 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
             }
           
             if (data$error) {
-              message_out <- paste0("Order Create: Error: ", symbol, ": ", data$error_message, "\n")
+              message_out <- paste0("Order Create: Remote Error: ", symbol, ": ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) } 
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Order Create: Warning: ", symbol, ": ", data$warning_message, "\n")
+              message_out <- paste0("Order Create: Remote Warning: ", symbol, ": ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
@@ -269,8 +271,8 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
             cat("Order", data$response$order_id, "created\n")
         },
         error = function(e) {
-            cat("Order Create: Error: ", symbol, ": ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Order Create: Local Error: ", symbol, ": ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
@@ -287,7 +289,7 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
                           data$response$shared,
                           data$response$copy_of,
                           data$response$date_created,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message
                           )
     return(return_vector)
@@ -295,26 +297,26 @@ order_create <- function(symbol, margin, direction, leverage = 1, order_type = "
 }
 
 
-order_cancel <- function(order_id) {
+order_cancel <- function(token, order_id) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/order/cancel.php", query = list(token=token, order_id=order_id)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Order Cancel: Error: ", data$error_message, "\n")
+              message_out <- paste0("Order Cancel: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Order Cancel: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Order Cancel: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Order Cancel: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Order Cancel: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
@@ -324,72 +326,71 @@ order_cancel <- function(order_id) {
 }
 
 
-position_open <- function() {
+position_open <- function(token) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/position/open.php", query = list(token=token)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Position Open: Error: ", data$error_message, "\n")
+              message_out <- paste0("Position Open: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Position Open: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Position Open: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Position Open: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Position Open: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
 
-
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-position_history <- function(offset = 0, limit = 20, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")) {
+position_history <- function(token, offset = 0, limit = 20, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/position/history.php", query = list(token=token, offset=offset, limit=limit, date_start=date_start, date_end = date_end)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Position History: Error: ", data$error_message, "\n")
+              message_out <- paste0("Position History: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Position History: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Position History: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Position History: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Position History: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
 
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-position_edit <- function(position_id, stop_loss, take_profit, trailing_stop_loss) {
+position_edit <- function(token, position_id, stop_loss, take_profit, trailing_stop_loss) {
     tryCatch({stop_loss}, error = function(e) {stop_loss <<- FALSE})
     tryCatch({take_profit}, error = function(e) {take_profit <<- FALSE})
     tryCatch({trailing_stop_loss}, error = function(e) {trailing_stop_loss <<- FALSE})
@@ -424,20 +425,20 @@ position_edit <- function(position_id, stop_loss, take_profit, trailing_stop_los
           }
           
           if (data$error) {
-            message_out <- paste0("Position Edit: Error: ", data$error_message, "\n")
+            message_out <- paste0("Position Edit: Remote Error: ", data$error_code, "\n")
             if (exists('bot')) { bot$sendMessage(message_out) }
             cat(message_out)
           }
           if (data$warning) {
-            message_out <- paste0("Position Edit: Warning: ", data$warning_message, "\n")
+            message_out <- paste0("Position Edit: Remote Warning: ", data$warning_message, "\n")
             if (exists('bot')) { bot$sendMessage(message_out) }
             cat(message_out)
           }
           result <- TRUE
         },
         error = function(e) {
-            cat("Position Edit: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Position Edit: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
@@ -446,7 +447,7 @@ position_edit <- function(position_id, stop_loss, take_profit, trailing_stop_los
                           as.numeric(data$response$stop_loss),
                           as.numeric(data$response$take_profit),
                           data$response$trailing_stop_loss,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message
                           )
     return(return_vector)
@@ -454,30 +455,32 @@ position_edit <- function(position_id, stop_loss, take_profit, trailing_stop_los
 }
 
 
-position_close <- function(position_id) {
+position_close <- function(token, position_id) {
     result <- NULL
     while( is.null(result) ) {
-        tryCatch({
+   #     tryCatch({
             data <- content(GET("https://1broker.com/api/v2/position/close.php", query = list(token=token, position_id=position_id)), as = "parsed")
             print(GET("https://1broker.com/api/v2/position/close.php", query = list(token=token, position_id=position_id)))
             print(data)
             if (data$error) {
-              message_out <- paste0("Position Close: Error: ", data$error_message, "\n")
-              if (exists('bot')) { bot$sendMessage(message_out) }
+              message_out <- paste0("Position Close: Remote Error: ", data$error_code, "\n")
               cat(message_out)
+              if (exists('bot')) { bot$sendMessage(message_out) }
+
             }
             if (data$warning) {
-              message_out <- paste0("Position Close: Warning: ", data$warning_message, "\n")
-              if (exists('bot')) { bot$sendMessage(message_out) }
+              message_out <- paste0("Position Close: Remote Warning: ", data$warning_message, "\n")
               cat(message_out)
+              if (exists('bot')) { bot$sendMessage(message_out) }
+
             }
             result <- TRUE
-        },
-        error = function(e) {
-            cat("Position Close: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
-            result <- NULL
-        })
+    #    },
+    #    error = function(e) {
+    #        cat("Position Close: Local Error: ", as.character(e), "\n")
+    #        Sys.sleep(wait_time)
+    #        result <- NULL
+    #    })
     }
 
     return(TRUE)
@@ -485,26 +488,26 @@ position_close <- function(position_id) {
 }
 
 
-position_close_cancel <- function(position_id) {
+position_close_cancel <- function(token, position_id) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/position/close_cancel.php", query = list(token=token, position_id=position_id)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Position Close Cancel: Error: ", data$error_message, "\n")
+              message_out <- paste0("Position Close Cancel: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Position Close Cancel: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Position Close Cancel: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Position Close Cancel: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Position Close Cancel: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
@@ -514,26 +517,26 @@ position_close_cancel <- function(position_id) {
 }
 
 
-position_shared_get <- function(position_id) {
+position_shared_get <- function(token, position_id) {
   result <- NULL
   while( is.null(result) ) {
     tryCatch({  
       data <- content(GET("https://1broker.com/api/v2/position/shared/get.php", query = list(token=token, position_id=position_id)), as = "parsed")
       if (data$error) {
-        message_out <- paste0("Position Shared Get: Error: ", data$error_message, "\n")
+        message_out <- paste0("Position Shared Get: Remote Error: ", data$error_code, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
-        message_out <- paste0("Position Shared Get: Warning: ", data$warning_message, "\n")
+        message_out <- paste0("Position Shared Get: Remote Warning: ", data$warning_message, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
     },
     error = function(e) {
-      cat("Position Shared Get: Error: ", as.character(e), "\n")
-      Sys.sleep(60)
+      cat("Position Shared Get: Local Error: ", as.character(e), "\n")
+      Sys.sleep(wait_time)
       result <- NULL
     })
   }
@@ -555,98 +558,98 @@ position_shared_get <- function(position_id) {
                         as.numeric(data$response$take_profit),
                         data$response$trailing_stop_loss,
                         data$response$comments,
-                        data$error_message,
+                        data$error_code,
                         data$warning_message)
   return(return_vector)
   
 }
   
 
-market_categories <- function() {
+market_categories <- function(token) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/market/categories.php", query = list(token=token)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Market Categories: Error: ", data$error_message, "\n")
+              message_out <- paste0("Market Categories: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Market Categories: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Market Categories: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Market Categories: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Market Categories: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
 
     #return(data$response)
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-market_list <- function(category = "Index") {
+market_list <- function(token, category = "INDEX") {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/market/list.php", query = list(token=token, category=category)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Market List: Error: ", data$error_message, "\n")
+              message_out <- paste0("Market List: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Market List: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Market List: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Market List: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Market List: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
 
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-market_details <- function(symbol="BTCUSD") {
+market_details <- function(token, symbol="BTCUSD") {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/market/details.php", query = list(token=token, symbol=symbol)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Market Details: Error: ", data$error_message, "\n")
+              message_out <- paste0("Market Details: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Market Details: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Market Details: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Market Details: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Market Details: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
@@ -666,118 +669,119 @@ market_details <- function(symbol="BTCUSD") {
                           data$response$market_hours$close,
                           data$response$market_hours$daily_break_start,
                           data$response$market_hours$daily_break_stop,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
     
 }
 
 
-market_quotes <- function(symbols="BTCUSD") {
+market_quotes <- function(token, symbols="BTCUSD") {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/market/quotes.php", query = list(token=token, symbols=symbols)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Market Quotes: Error: ", data$error_message, "\n")
+              message_out <- paste0("Market Quotes: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Market Quotes: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Market Quotes: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Market Quotes: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Market Quotes: Local Error: ", as.character(e), "\n")
+            cat("Wait time: ", wait_time, "\n")
+            Sys.sleep(wait_time)
+            cat("Done sleeping\n")
             result <- NULL
+            cat("result: ", result, "\n")
         })
+      
     }
     
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-market_bars <- function(symbol, resolution = 86400, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"), limit=NULL ) {
+market_bars <- function(token, symbol, resolution = 86400, date_start = "1970-01-01T12:00:00Z", date_end = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"), limit=NULL ) {
     result <- NULL
     while( is.null(result) ) {
         tryCatch({
             data <- content(GET("https://1broker.com/api/v2/market/bars.php", query = list(token=token, symbol=symbol, resolution=resolution, date_start=date_start, date_end = date_end, limit=limit)), as = "parsed")
             if (data$error) {
-              message_out <- paste0("Market Bars: Error: ", data$error_message, "\n")
+              message_out <- paste0("Market Bars: Remote Error: ", data$error_code, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             if (data$warning) {
-              message_out <- paste0("Market Bars: Warning: ", data$warning_message, "\n")
+              message_out <- paste0("Market Bars: Remote Warning: ", data$warning_message, "\n")
               if (exists('bot')) { bot$sendMessage(message_out) }
               cat(message_out)
             }
             result <- TRUE
         },
         error = function(e) {
-            cat("Market Bars: Error: ", as.character(e), "\n")
-            Sys.sleep(60)
+            cat("Market Bars: Local Error: ", as.character(e), "\n")
+            Sys.sleep(wait_time)
             result <- NULL
         })
     }
 
     return_vector <- list(data$response,
-                          data$error_message,
+                          data$error_code,
                           data$warning_message)
     return(return_vector)
 
 }
 
 
-get_all_quotes <- function() {
+get_all_quotes <- function(token) {
     symbols = ""
-    categories <- market_categories()
+    categories <- unlist(market_categories())
+    categories <- categories[categories != ""]
     for (category in categories) {
-        list[market] <- market_list(category=category)
-        for (i in 1:length(market)) {
-            symbols <- paste0(symbols, market[i][[1]]$symbol, sep=",")
-            if (i %% 20 == 0 || i == length(market)) {
-                symbols <- substr(symbols, 1, nchar(symbols)-1)
-                list[quotes] <- market_quotes(symbols=symbols)
-                for (j in 1: length(quotes)) {
-                    cat(quotes[j][[1]]$symbol, ":", (as.numeric(quotes[j][[1]]$bid) + as.numeric(quotes[j][[1]]$ask)) / 2, "\n")
-                }
-                symbols = ""
-                Sys.sleep(1)
-            }
-        }
+      list[market] <- market_list(category=category)
+      for (i in 1:length(market)) {
+        symbols <- paste0(symbols, market[i][[1]]$symbol, sep=",")
+      }
+    }
+    symbols <- substr(symbols, 1, nchar(symbols)-1)
+    list[quotes] <- market_quotes(symbols=symbols)
+    for (j in 1: length(quotes)) {
+      cat(quotes[j][[1]]$symbol, ":", (as.numeric(quotes[j][[1]]$bid) + as.numeric(quotes[j][[1]]$ask)) / 2, "\n")
     }
 }
 
 
-social_profile_statistics <- function(user_id=1) {
+social_profile_statistics <- function(token, user_id=1) {
   result <- NULL
   while( is.null(result) ) {
     tryCatch({  
       data <- content(GET("https://1broker.com/api/v2/social/profile_statistics.php", query = list(token=token, user_id=user_id)), as = "parsed")
       if (data$error) {
-        message_out <- paste0("Social Profile Statistics: Error: ", data$error_message, "\n")
+        message_out <- paste0("Social Profile Statistics: Remote Error: ", data$error_code, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
-        message_out <- paste0("Social Profile Statistics: Warning: ", data$warning_message, "\n")
+        message_out <- paste0("Social Profile Statistics: Remote Warning: ", data$warning_message, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
     },
     error = function(e) {
-      cat("Social Profile Statistics: Error: ", as.character(e), "\n")
-      Sys.sleep(60)
+      cat("Social Profile Statistics: Local Error: ", as.character(e), "\n")
+      Sys.sleep(wait_time)
       result <- NULL
     })
   }
@@ -802,33 +806,33 @@ social_profile_statistics <- function(user_id=1) {
                         as.numeric(data$response$trades_last_7_days),
                         as.numeric(data$response$trades_last_12_months),
                         data$response$market_category_share,
-                        data$error_message,
+                        data$error_code,
                         data$warning_message)
   return(return_vector)
   
 }
 
 
-social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
+social_profile_trades <- function(token, user_id=1, offset = 0, limit = 20) {
   result <- NULL
   while( is.null(result) ) {
     tryCatch({  
       data <- content(GET("https://1broker.com/api/v2/social/profile_trades.php", query = list(token=token, user_id=user_id, offset = offset, limit = limit)), as = "parsed")
       if (data$error) {
-        message_out <- paste0("Social Profile Trades: Error: ", data$error_message, "\n")
-        if (exists('bot')) { bot$sendMessage(message_out) }
+        message_out <- paste0("Social Profile Trades: Remote Error: ", data$error_code, "\n")
+        # if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
-        message_out <- paste0("Social Profile Trades: Warning: ", data$warning_message, "\n")
-        if (exists('bot')) { bot$sendMessage(message_out) }
+        message_out <- paste0("Social Profile Trades: Remote Warning: ", data$warning_message, "\n")
+        # if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
     },
     error = function(e) {
-      cat("Social Profile Trades: Error(2): ", as.character(e), "\n")
-      Sys.sleep(60)
+      cat("Social Profile Trades: Local Error: ", as.character(e), "\n")
+      Sys.sleep(wait_time)
       result <- NULL
     })
   }
@@ -845,76 +849,33 @@ social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
                         as.numeric(data$response$maximum_loss_this_month),
                         data$response$trading_ideas_open,
                         data$response$trading_ideas_closed,
-                        data$error_message,
+                        data$error_code,
                         data$warning_message)
   return(return_vector)
   
 }
 
 
-social_profile_trades <- function(user_id=1, offset = 0, limit = 20) {
-  result <- NULL
-  while( is.null(result) ) {
-    tryCatch({  
-      data <- content(GET("https://1broker.com/api/v2/social/profile_trades.php", query = list(token=token, user_id=user_id, offset = offset, limit = limit)), as = "parsed")
-      if (data$error) {
-        message_out <- paste0("Social Profile Trades: Error: ", data$error_message, "\n")
-        if (exists('bot')) { bot$sendMessage(message_out) }
-        cat(message_out)
-      }
-      if (data$warning) {
-        message_out <- paste0("Social Profile Trades: Warning: ", data$warning_message, "\n")
-        if (exists('bot')) { bot$sendMessage(message_out) }
-        cat(message_out)
-      }
-      result <- TRUE
-    },
-    error = function(e) {
-      cat("Social Profile Trades: Error(2): ", as.character(e), "\n")
-      Sys.sleep(60)
-      result <- NULL
-    })
-  }
-  
-  return_vector <- list(as.numeric(data$response$user_id),
-                        data$response$username,
-                        data$response$profile_image_url,
-                        data$response$date_created,
-                        data$response$profile_about_me_html,
-                        data$response$profile_about_me_raw,
-                        data$response$own_profile_hidden,
-                        as.numeric(data$response$risk_score),
-                        as.numeric(data$response$maximum_profit_this_month),
-                        as.numeric(data$response$maximum_loss_this_month),
-                        data$response$trading_ideas_open,
-                        data$response$trading_ideas_closed,
-                        data$error_message,
-                        data$warning_message)
-  return(return_vector)
-  
-}
-
-
-copy_trader_create <- function(user_id=3981, margin_per_trade = 0.25, limit_trades_daily = 20) {
+copy_trader_create <- function(token, user_id=3981, margin_per_trade = 0.25, limit_trades_daily = 20) {
   result <- NULL
   while( is.null(result) ) {
     tryCatch({  
       data <- content(GET("https://1broker.com/api/v2/copy_trader/create.php", query = list(token=token, user_id=user_id, margin_per_trade = margin_per_trade, limit_trades_daily = limit_trades_daily)), as = "parsed")
       if (data$error) {
-        message_out <- paste0("Copy Trader Create: Error: ", data$error_message, "\n")
+        message_out <- paste0("Copy Trader Create: Remote Error: ", data$error_code, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
-        message_out <- paste0("Copy Trader Create: Warning: ", data$warning_message, "\n")
+        message_out <- paste0("Copy Trader Create: Remote Warning: ", data$warning_message, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
     },
     error = function(e) {
-      cat("Copy Trader Create: Error(2): ", as.character(e), "\n")
-      Sys.sleep(60)
+      cat("Copy Trader Create: Local Error: ", as.character(e), "\n")
+      Sys.sleep(wait_time)
       result <- NULL
     })
   }
@@ -924,26 +885,26 @@ copy_trader_create <- function(user_id=3981, margin_per_trade = 0.25, limit_trad
 }
 
 
-copy_trader_edit <- function(user_id=3981, margin_per_trade = 0.25, limit_trades_daily = 20) {
+copy_trader_edit <- function(token, user_id=3981, margin_per_trade = 0.25, limit_trades_daily = 20) {
   result <- NULL
   while( is.null(result) ) {
     tryCatch({  
       data <- content(GET("https://1broker.com/api/v2/copy_trader/edit.php", query = list(token=token, user_id=user_id, margin_per_trade = margin_per_trade, limit_trades_daily = limit_trades_daily)), as = "parsed")
       if (data$error) {
-        message_out <- paste0("Copy Trader Edit: Error: ", data$error_message, "\n")
+        message_out <- paste0("Copy Trader Edit: Remote Error: ", data$error_code, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
-        message_out <- paste0("Copy Trader Edit: Warning: ", data$warning_message, "\n")
+        message_out <- paste0("Copy Trader Edit: Remote Warning: ", data$warning_message, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
     },
     error = function(e) {
-      cat("Copy Trader Edit: Error(2): ", as.character(e), "\n")
-      Sys.sleep(60)
+      cat("Copy Trader Edit: Local Error: ", as.character(e), "\n")
+      Sys.sleep(wait_time)
       result <- NULL
     })
   }
@@ -952,26 +913,26 @@ copy_trader_edit <- function(user_id=3981, margin_per_trade = 0.25, limit_trades
   
 }
 
-copy_trader_delete <- function(user_id=3981) {
+copy_trader_delete <- function(token, user_id=3981) {
   result <- NULL
   while( is.null(result) ) {
     tryCatch({  
       data <- content(GET("https://1broker.com/api/v2/copy_trader/delete.php", query = list(token=token, user_id=user_id)), as = "parsed")
       if (data$error) {
-        message_out <- paste0("Copy Trader Delete: Error: ", data$error_message, "\n")
+        message_out <- paste0("Copy Trader Delete: Remote Error: ", data$error_code, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       if (data$warning) {
-        message_out <- paste0("Copy Trader Delete: Warning: ", data$warning_message, "\n")
+        message_out <- paste0("Copy Trader Delete: Remote Warning: ", data$warning_message, "\n")
         if (exists('bot')) { bot$sendMessage(message_out) }
         cat(message_out)
       }
       result <- TRUE
     },
     error = function(e) {
-      cat("Copy Trader Delete: Error(2): ", as.character(e), "\n")
-      Sys.sleep(60)
+      cat("Copy Trader Delete: Local Error: ", as.character(e), "\n")
+      Sys.sleep(wait_time)
       result <- NULL
     })
   }
